@@ -1,9 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '') || 'http://localhost:5000';
+
+if (!import.meta.env.VITE_API_URL) {
+  console.warn('VITE_API_URL is not defined. Falling back to http://localhost:5000');
+}
 
 const client = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -64,7 +68,7 @@ export const usersAPI = {
   getAll: () => client.get('/users'),
   getById: (id) => client.get(`/users/${id}`),
   downloadCV: (id) => client.get(`/users/${id}/download-cv`, { responseType: 'blob' }),
-  getPhoto: (id) => `${API_BASE_URL}/users/${id}/photo`,
+  getPhoto: (id) => `${API_BASE_URL}/api/users/${id}/photo`,
 };
 
 export default client;
