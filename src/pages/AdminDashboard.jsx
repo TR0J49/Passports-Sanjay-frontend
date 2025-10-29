@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { usersAPI } from '../api/client';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '') || 'http://localhost:5000';
+
 export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
@@ -119,7 +121,7 @@ export default function AdminDashboard() {
                     <div className="md:col-span-2">
                       <p className="text-gray-400 text-sm mb-2">Photo</p>
                       <img
-                        src={`http://localhost:5000/uploads/${selectedUser.photo}`}
+                        src={usersAPI.getPhoto(selectedUser._id)}
                         alt={selectedUser.name}
                         className="w-32 h-32 rounded-lg object-cover border-2 border-primary shadow-lg"
                         onError={(e) => {
