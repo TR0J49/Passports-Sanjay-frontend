@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { usersAPI } from '../api/client';
 
+// Get API base URL from environment
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '') || 'http://localhost:5000';
 
 export default function AdminDashboard() {
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
                     <div className="md:col-span-2">
                       <p className="text-gray-400 text-sm mb-2">Photo</p>
                       <img
-                        src={usersAPI.getPhoto(selectedUser._id)}
+                        src={`${API_BASE_URL}/api/users/${selectedUser._id}/photo`}
                         alt={selectedUser.name}
                         className="w-32 h-32 rounded-lg object-cover border-2 border-primary shadow-lg"
                         onError={(e) => {
