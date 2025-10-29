@@ -68,7 +68,7 @@ export const usersAPI = {
   getAll: () => client.get('/users'),
   getById: (id) => client.get(`/users/${id}`),
   downloadCV: (id) => client.get(`/users/${id}/download-cv`, { responseType: 'blob' }),
-  getPhoto: (id) => `${API_BASE_URL}/api/users/${id}/photo`,
+  getPhoto: (id) => `${API_BASE_URL}/users/${id}/photo`,
 };
 
 export default client;
