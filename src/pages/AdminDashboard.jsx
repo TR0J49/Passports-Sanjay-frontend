@@ -34,54 +34,6 @@ export default function AdminDashboard() {
     setSelectedUser(user);
   };
 
-  const handleDownloadCV = async (userId) => {
-    try {
-      setError(''); // Clear previous errors
-      
-      const response = await usersAPI.downloadCV(userId);
-      
-      // Check if response is valid
-      if (!response.data || response.data.size === 0) {
-        throw new Error('Empty file received');
-      }
-      
-      // Create blob from response data
-      const blob = new Blob([response.data], { 
-        type: response.headers['content-type'] || 'application/octet-stream' 
-      });
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      
-      // Get filename from Content-Disposition header or use default
-      const contentDisposition = response.headers['content-disposition'];
-      let fileName = `CV-${Date.now()}.pdf`;
-      if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (fileNameMatch) {
-          fileName = fileNameMatch[1];
-        }
-      }
-      
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        link.parentNode.removeChild(link);
-      }, 100);
-      
-    } catch (err) {
-      console.error('CV download error:', err);
-      const errorMsg = err.response?.data?.message || err.message || 'Failed to download CV';
-      setError(errorMsg);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-dark to-darker py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -215,15 +167,6 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-
-                {selectedUser.cv && (
-                  <button
-                    onClick={() => handleDownloadCV(selectedUser._id)}
-                    className="w-full bg-primary text-darker py-3 rounded font-semibold hover:bg-blue-400 transition"
-                  >
-                    📥 Download CV
-                  </button>
-                )}
               </div>
             ) : (
               <div className="bg-darker/50 border border-primary/30 rounded-lg p-8 glow-effect text-center text-gray-400">
