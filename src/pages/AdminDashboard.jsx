@@ -37,15 +37,35 @@ export default function AdminDashboard() {
   const handleDownloadCV = async (userId) => {
     try {
       const response = await usersAPI.downloadCV(userId);
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      
+      // Create blob from response data
+      const blob = new Blob([response.data], { type: 'application/octet-stream' });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `CV-${Date.now()}.pdf`);
+      
+      // Get filename from Content-Disposition header or use default
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = `CV-${Date.now()}.pdf`;
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (fileNameMatch) fileName = fileNameMatch[1];
+      }
+      
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
       link.parentNode.removeChild(link);
+      
+      setError(''); // Clear any previous errors
     } catch (err) {
-      setError('Failed to download CV');
+      console.error('CV download error:', err);
+      setError(err.response?.data?.message || 'Failed to download CV');
     }
   };
 
